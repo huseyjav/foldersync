@@ -1,14 +1,44 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using foldersync.config;
+using foldersync.customLoggers;
+
+
 class Program
 {
     static void Main()
     {
-        CConfig config1 = new CConsoleConfig();
-        //var folderTracker = new foldersync.tracker.ShaTracker(config1.sourcePath);
-        var folderTracker = new foldersync.tracker.FolderTracker(config1.sourcePath);
-        var fileTracker = new foldersync.tracker.ShaTracker(config1.sourcePath);
-        var syncer = new foldersync.sync.Synchronizer(folderTracker, fileTracker, config1.sourcePath, config1.replicaPath);
+        var services = new ServiceCollection();
+
+        services.AddSingleton<CConfig, CConsoleConfig>();
+
+        services.AddSingleton<foldersync.tracker.FolderTracker>(sp =>
+            new foldersync.tracker.FolderTracker(sp.GetRequiredService<CConfig>().sourcePath));
+
+        services.AddSingleton<foldersync.tracker.ShaTracker>(sp =>
+            new foldersync.tracker.ShaTracker(sp.GetRequiredService<CConfig>().sourcePath));
+
+        services.AddLogging(builder =>
+        {
+            builder.ClearProviders();
+            builder.AddCustomConsoleLogger();
+            builder.AddFileLogger("outputlog");
+        });
+
+        services.AddSingleton<foldersync.sync.Synchronizer>(sp =>
+            new foldersync.sync.Synchronizer(
+                sp.GetRequiredService<foldersync.tracker.FolderTracker>(),
+                sp.GetRequiredService<foldersync.tracker.ShaTracker>(),
+                sp.GetRequiredService<CConfig>().sourcePath,
+                sp.GetRequiredService<CConfig>().replicaPath,
+                sp.GetRequiredService<ILogger<foldersync.sync.Synchronizer>>()
+            ));
+
+        var provider = services.BuildServiceProvider();
+
+        var syncer = provider.GetRequiredService<foldersync.sync.Synchronizer>();
+        var config1 = provider.GetRequiredService<CConfig>();
+
         while (true)
         {
             syncer.sync();
@@ -16,18 +46,3 @@ class Program
         }
     }
 }
-
-
-/*
-ITracker -- interface for tracking changes
-getChanges() -- returns a list of changes -- data type not yet decided on
- 
-CShaTracker -- tracking changes using SHA hash
-on constructor, take config and make map of all the hashes
-implement getChanges()
-
-
-CFolderSync 
-
-
-*/
