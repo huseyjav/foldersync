@@ -7,13 +7,11 @@ class Program
         CConfig config1 = new CConsoleConfig();
         //var folderTracker = new foldersync.tracker.ShaTracker(config1.sourcePath);
         var folderTracker = new foldersync.tracker.FolderTracker(config1.sourcePath);
-
+        var fileTracker = new foldersync.tracker.ShaTracker(config1.sourcePath);
+        var syncer = new foldersync.sync.Synchronizer(folderTracker, fileTracker, config1.sourcePath, config1.replicaPath);
         while (true)
         {
-            foreach(var kyp in folderTracker.GetChanges())
-            {
-                Console.WriteLine(kyp);
-            }
+            syncer.sync();
             Thread.Sleep(config1.syncInterval);
         }
     }
