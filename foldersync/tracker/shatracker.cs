@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace foldersync.tracker
 { 
+    /// <summary>
+    /// Uses SHA256 hashes of files in a directory to track changes
+    /// </summary>
     public class ShaTracker : Tracker
     {
         private Dictionary<string, byte[]> hashedFile = new Dictionary<string, byte[]>();
@@ -20,7 +23,10 @@ namespace foldersync.tracker
                 .EnumerateFiles(folderToTrack, "*", SearchOption.AllDirectories)
                 .ToDictionary(file => Path.GetRelativePath(folderToTrack, file), file => CryptoWrappers.ComputeHash(file));
         }
-
+        /// <summary>
+        /// Returns a dictionary of changes in the directory tracked
+        /// </summary>
+        /// <returns>Dictionary where the key is relative path file and value the type of change</returns>
         public override Dictionary<string, changeType> GetChanges()
         {
             // Assume all files removed initially 

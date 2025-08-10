@@ -20,7 +20,10 @@ namespace foldersync.tracker
                 .Select(folderAbsolute => Path.GetRelativePath(folderToTrack, folderAbsolute))
                 .ToList();
         }
-
+        /// <summary>
+        /// Tracks changes done in subdirectories of a directory
+        /// </summary>
+        /// <returns>Dictionary where key is relative folder path and value whether it was added or removed</returns>
         public override Dictionary<string, changeType> GetChanges()
         {
             // Assume all folders removed initially 
