@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace foldersync.tracker
 {
-    public enum changeType
+    public enum ChangeType
     {
         modified,
         added,
@@ -14,12 +14,12 @@ namespace foldersync.tracker
     }
     public abstract class Tracker
     {
-        protected string folderToTrack;
-        public abstract Dictionary<string, changeType> GetChanges();
+        protected string _folderToTrack;
+        public abstract Dictionary<string, ChangeType> GetChanges();
 
         public Tracker(string folderToTrack)
         {
-            this.folderToTrack = folderToTrack;
+            this._folderToTrack = folderToTrack;
         }
     }
 }

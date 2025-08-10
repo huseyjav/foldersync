@@ -7,30 +7,30 @@ using System.Threading.Tasks;
 namespace foldersync.config
 {
 
-    public abstract class CConfig
+    public abstract class Config
     {
-        protected string m_sourcePath;
-        protected string m_replicaPath;
-        protected int m_syncInterval;
-        protected string m_logFile;
+        protected string _sourcePath;
+        protected string _replicaPath;
+        protected int _syncInterval;
+        protected string _logFile;
 
         public string sourcePath
         {
-            get { return m_sourcePath; }
+            get { return _sourcePath; }
         }
         public string replicaPath
         {
-            get { return m_replicaPath; }
+            get { return _replicaPath; }
         }
 
         public int syncInterval
         {
-            get { return m_syncInterval; }
+            get { return _syncInterval; }
         }
 
         public string logFile
         {
-            get { return m_logFile; }
+            get { return _logFile; }
         }
     }
 }

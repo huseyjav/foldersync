@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace foldersync.config
 {
-    public class CConsoleConfig : CConfig
+    public class ConsoleConfig : Config
     {
-        public CConsoleConfig()
+        public ConsoleConfig()
         {
             Console.WriteLine("Source path:");
-            m_sourcePath = Console.ReadLine();
+            _sourcePath = Console.ReadLine();
             Console.WriteLine("Replica path:");
-            m_replicaPath = Console.ReadLine();
+            _replicaPath = Console.ReadLine();
             Console.WriteLine("Sync Interval (in ms):");
-            m_syncInterval = int.Parse(Console.ReadLine());
+            _syncInterval = int.Parse(Console.ReadLine());
         }
     }
 }

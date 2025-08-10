@@ -10,13 +10,13 @@ class Program
     {
         var services = new ServiceCollection();
 
-        services.AddSingleton<CConfig, CConsoleConfig>();
+        services.AddSingleton<Config, ConsoleConfig>();
 
         services.AddSingleton<foldersync.tracker.FolderTracker>(sp =>
-            new foldersync.tracker.FolderTracker(sp.GetRequiredService<CConfig>().sourcePath));
+            new foldersync.tracker.FolderTracker(sp.GetRequiredService<Config>().sourcePath));
 
         services.AddSingleton<foldersync.tracker.ShaTracker>(sp =>
-            new foldersync.tracker.ShaTracker(sp.GetRequiredService<CConfig>().sourcePath));
+            new foldersync.tracker.ShaTracker(sp.GetRequiredService<Config>().sourcePath));
 
         services.AddLogging(builder =>
         {
@@ -29,19 +29,19 @@ class Program
             new foldersync.sync.Synchronizer(
                 sp.GetRequiredService<foldersync.tracker.FolderTracker>(),
                 sp.GetRequiredService<foldersync.tracker.ShaTracker>(),
-                sp.GetRequiredService<CConfig>().sourcePath,
-                sp.GetRequiredService<CConfig>().replicaPath,
+                sp.GetRequiredService<Config>().sourcePath,
+                sp.GetRequiredService<Config>().replicaPath,
                 sp.GetRequiredService<ILogger<foldersync.sync.Synchronizer>>()
             ));
 
         var provider = services.BuildServiceProvider();
 
         var syncer = provider.GetRequiredService<foldersync.sync.Synchronizer>();
-        var config1 = provider.GetRequiredService<CConfig>();
+        var config1 = provider.GetRequiredService<Config>();
 
         while (true)
         {
-            syncer.sync();
+            syncer.Sync();
             Thread.Sleep(config1.syncInterval);
         }
     }

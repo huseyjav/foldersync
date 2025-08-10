@@ -8,36 +8,36 @@ namespace foldersync.tracker
 {
     public class FolderTracker : Tracker
     {
-        List<string> foldersRelative;
+        private List<string> _foldersRelative;
         public FolderTracker(string folderToTrack) : base(folderToTrack)
         {
-            updateFoldersList();
+            UpdateFoldersList();
         }
 
-        private void updateFoldersList()
+        private void UpdateFoldersList()
         {
-            foldersRelative = Directory.EnumerateDirectories(folderToTrack, "*", SearchOption.AllDirectories)
-                .Select(folderAbsolute => Path.GetRelativePath(folderToTrack, folderAbsolute))
+            _foldersRelative = Directory.EnumerateDirectories(_folderToTrack, "*", SearchOption.AllDirectories)
+                .Select(folderAbsolute => Path.GetRelativePath(_folderToTrack, folderAbsolute))
                 .ToList();
         }
         /// <summary>
         /// Tracks changes done in subdirectories of a directory
         /// </summary>
         /// <returns>Dictionary where key is relative folder path and value whether it was added or removed</returns>
-        public override Dictionary<string, changeType> GetChanges()
+        public override Dictionary<string, ChangeType> GetChanges()
         {
             // Assume all folders removed initially 
-            var listOfChanges = foldersRelative.ToDictionary(folderRelative => folderRelative, KeyValuePair => changeType.removed);
+            var listOfChanges = _foldersRelative.ToDictionary(folderRelative => folderRelative, KeyValuePair => ChangeType.removed);
 
-            foreach (string currentFolderAbsolute in Directory.EnumerateDirectories(folderToTrack, "*", SearchOption.AllDirectories))
+            foreach (string currentFolderAbsolute in Directory.EnumerateDirectories(_folderToTrack, "*", SearchOption.AllDirectories))
             {
-                var currentFolderRelative = Path.GetRelativePath(folderToTrack, currentFolderAbsolute);
+                var currentFolderRelative = Path.GetRelativePath(_folderToTrack, currentFolderAbsolute);
 
-                if (!foldersRelative.Contains(currentFolderRelative)) listOfChanges[currentFolderRelative] = changeType.added;
+                if (!_foldersRelative.Contains(currentFolderRelative)) listOfChanges[currentFolderRelative] = ChangeType.added;
                 else listOfChanges.Remove(currentFolderRelative);
 
             }
-            updateFoldersList();
+            UpdateFoldersList();
 
             return listOfChanges;
         }
