@@ -22,8 +22,15 @@ class Program
         {
             builder.ClearProviders();
             builder.AddCustomConsoleLogger();
-            builder.AddFileLogger("outputlog");
+            // Can't get the logFile from config since service provider is not built yet
+            // So have to add the Logger provider manually rather than AddLogging doing it
+            services.AddSingleton<ILoggerProvider>(sp =>
+            {
+                var config = sp.GetRequiredService<Config>();
+                return new FileLoggerProvider(config.logFile);
+            });
         });
+        
 
         services.AddSingleton<foldersync.sync.Synchronizer>(sp =>
             new foldersync.sync.Synchronizer(
@@ -36,6 +43,7 @@ class Program
 
         var provider = services.BuildServiceProvider();
 
+        
         var syncer = provider.GetRequiredService<foldersync.sync.Synchronizer>();
         var config1 = provider.GetRequiredService<Config>();
 

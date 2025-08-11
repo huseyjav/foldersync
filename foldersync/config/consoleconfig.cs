@@ -16,6 +16,8 @@ namespace foldersync.config
             _replicaPath = Console.ReadLine();
             Console.WriteLine("Sync Interval (in ms):");
             _syncInterval = int.Parse(Console.ReadLine());
+            Console.WriteLine("Log file path:");
+            _logFile = Console.ReadLine();
         }
     }
 }
